@@ -14,6 +14,8 @@ class Backend : public QObject {
     Q_PROPERTY(QString output READ output NOTIFY outputChanged)
     Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
     Q_PROPERTY(bool canElevate READ canElevate CONSTANT)
+    Q_PROPERTY(bool supported READ supported CONSTANT)
+    Q_PROPERTY(bool omarchy READ isOmarchy CONSTANT)
 
 public:
     explicit Backend(QObject *parent = nullptr);
@@ -27,7 +29,10 @@ public:
     QString output() const { return m_output; }
     bool busy() const { return m_busy; }
     bool canElevate() const;
+    bool supported() const { return isArchBased(); }
 
+    static bool isArchBased(const QString &osReleasePath = "/etc/os-release");
+    static bool isOmarchy();
     static bool validPackageName(const QString &name);
     static QVariantList parseSearchOutput(const QString &text, const QSet<QString> &installed);
 

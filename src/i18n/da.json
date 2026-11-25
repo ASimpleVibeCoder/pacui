@@ -21,5 +21,9 @@
   "Removed %1.": "Fjernede %1.",
   "Upgrading the system...": "Opdaterer systemet...",
   "System upgraded.": "System opdateret.",
-  "Searching for %1...": "Søger efter %1..."
+  "Searching for %1...": "Søger efter %1...",
+  "This app only works on Arch-based systems.": "Denne app virker kun på Arch-baserede systemer.",
+  "Unsupported system: an Arch-based distribution is required": "Ikke-understøttet system: en Arch-baseret distribution er påkrævet",
+  "Running omarchy update...": "Kører omarchy update...",
+  "Runs omarchy update": "Kører omarchy update"
 }

@@ -49,24 +49,39 @@ ApplicationWindow {
                 }
             }
 
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                visible: !backend.supported
+                color: "#3a1c1c"
+                radius: theme.radius
+                Label {
+                    anchors.centerIn: parent
+                    text: qsTr("Unsupported system: an Arch-based distribution is required")
+                    color: "#ff8a8a"
+                    font.pixelSize: 13
+                }
+            }
+
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 8
                 TextField {
                     id: field
                     Layout.fillWidth: true
+                    enabled: backend.supported
                     placeholderText: qsTr("Search packages...")
                     onAccepted: backend.search()
                     onTextChanged: backend.query = text
                 }
                 Button {
                     text: qsTr("Search")
-                    enabled: !backend.busy
+                    enabled: backend.supported && !backend.busy
                     onClicked: backend.search()
                 }
                 Button {
                     text: qsTr("Refresh")
-                    enabled: !backend.busy
+                    enabled: backend.supported && !backend.busy
                     onClicked: backend.refreshInstalled()
                 }
             }
@@ -88,10 +103,11 @@ ApplicationWindow {
                 }
                 Button {
                     text: qsTr("Update system")
-                    enabled: !backend.busy && backend.canElevate
+                    enabled: backend.supported && !backend.busy && (backend.omarchy || backend.canElevate)
                     onClicked: backend.upgrade()
-                    ToolTip.visible: hovered && !backend.canElevate
-                    ToolTip.text: qsTr("pkexec is required for privileged operations")
+                    ToolTip.visible: hovered && (backend.omarchy || !backend.canElevate)
+                    ToolTip.text: backend.omarchy ? qsTr("Runs omarchy update")
+                                                  : qsTr("pkexec is required for privileged operations")
                 }
                 Button {
                     text: qsTr("Clear log")
@@ -168,7 +184,7 @@ ApplicationWindow {
 
                             Button {
                                 text: modelData.installed ? qsTr("Remove") : qsTr("Install")
-                                enabled: !backend.busy && backend.canElevate
+                                enabled: backend.supported && !backend.busy && backend.canElevate
                                 Layout.preferredWidth: 104
                                 onClicked: modelData.installed ? backend.remove(modelData.name) : backend.install(modelData.name)
                             }

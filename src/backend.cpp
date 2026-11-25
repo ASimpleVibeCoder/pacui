@@ -1,11 +1,17 @@
 #include "backend.h"
 
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QVariantMap>
 
 Backend::Backend(QObject *parent)
     : QObject(parent), m_process(new QProcess(this)) {
+    if (!isArchBased())
+        m_status = tr("This app only works on Arch-based systems.");
+
     connect(m_process, &QProcess::errorOccurred, this, [this](QProcess::ProcessError error) {
         if (error == QProcess::FailedToStart) {
             setBusy(false);
@@ -67,6 +73,35 @@ void Backend::appendOutput(const QString &text) {
 
 bool Backend::canElevate() const {
     return !QStandardPaths::findExecutable("pkexec").isEmpty();
+}
+
+bool Backend::isArchBased(const QString &osReleasePath) {
+    QFile file(osReleasePath);
+    if (file.open(QIODevice::ReadOnly)) {
+        const QString data = QString::fromUtf8(file.readAll());
+        auto value = [&](const QString &key) {
+            const QRegularExpression pattern("^" + QRegularExpression::escape(key) +
+                                             "=[\"']?([^\"'\\n]*)",
+                                             QRegularExpression::MultilineOption);
+            const auto match = pattern.match(data);
+            return match.hasMatch() ? match.captured(1).trimmed() : QString();
+        };
+        const QString id = value("ID");
+        const QString like = value("ID_LIKE");
+        if (id == "arch" || id == "archarm" || id == "archlinux")
+            return true;
+        if (like.split(' ', Qt::SkipEmptyParts).contains("arch"))
+            return true;
+    }
+    return false;
+}
+
+bool Backend::isOmarchy() {
+    if (!qEnvironmentVariableIsEmpty("OMARCHY_PATH"))
+        return true;
+    if (!QStandardPaths::findExecutable("omarchy").isEmpty())
+        return true;
+    return QFileInfo::exists(QDir::homePath() + "/.local/state/omarchy/current");
 }
 
 bool Backend::validPackageName(const QString &name) {
@@ -172,6 +207,10 @@ void Backend::run(Command command, const QString &program, const QStringList &ar
 }
 
 void Backend::search() {
+    if (!isArchBased()) {
+        setStatus(tr("This app only works on Arch-based systems."));
+        return;
+    }
     const QString term = m_query.trimmed();
     if (term.isEmpty()) {
         m_packages.clear();
@@ -189,6 +228,10 @@ void Backend::search() {
 }
 
 void Backend::install(const QString &package) {
+    if (!isArchBased()) {
+        setStatus(tr("This app only works on Arch-based systems."));
+        return;
+    }
     if (!canElevate()) {
         setStatus(tr("pkexec is not installed."));
         return;
@@ -202,6 +245,10 @@ void Backend::install(const QString &package) {
 }
 
 void Backend::remove(const QString &package) {
+    if (!isArchBased()) {
+        setStatus(tr("This app only works on Arch-based systems."));
+        return;
+    }
     if (!canElevate()) {
         setStatus(tr("pkexec is not installed."));
         return;
@@ -215,6 +262,14 @@ void Backend::remove(const QString &package) {
 }
 
 void Backend::upgrade() {
+    if (!isArchBased()) {
+        setStatus(tr("This app only works on Arch-based systems."));
+        return;
+    }
+    if (isOmarchy()) {
+        run(Command::Upgrade, "omarchy", {"update"}, tr("Running omarchy update..."));
+        return;
+    }
     if (!canElevate()) {
         setStatus(tr("pkexec is not installed."));
         return;
@@ -223,6 +278,10 @@ void Backend::upgrade() {
 }
 
 void Backend::refreshInstalled() {
+    if (!isArchBased()) {
+        setStatus(tr("This app only works on Arch-based systems."));
+        return;
+    }
     loadInstalled();
     refreshInstalledFlags();
     setStatus(tr("Installed packages refreshed."));

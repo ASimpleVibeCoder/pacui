@@ -13,6 +13,12 @@ This app is vibecoded.
 
 Actions that change the system use `--noconfirm`; the button you press is the confirmation.
 
+## System checks
+
+The app only works on Arch-based systems (`ID=arch`, `ID=archarm`, or an `ID_LIKE` containing `arch`). On anything else it shows a warning banner and disables all package operations.
+
+On Omarchy, "Update system" runs `omarchy update` instead of `sudo pacman -Syu`, so Omarchy's own update flow handles the packages and its configuration. On other Arch-based systems it uses `pkexec pacman -Syu --noconfirm`.
+
 ## Build and run
 
 Requires `qmake6`, `make`, a C++ compiler, Qt 6 base/declarative/wayland, `pacman` and `polkit`.

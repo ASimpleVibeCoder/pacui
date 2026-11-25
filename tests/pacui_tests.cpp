@@ -53,6 +53,21 @@ private slots:
         QVERIFY(!Backend::validPackageName(""));
     }
 
+    void detectsArchBasedSystems()
+    {
+        QTemporaryDir dir;
+        write(dir.filePath("arch"), "ID=arch\n");
+        write(dir.filePath("archarm"), "ID=archarm\nID_LIKE=arch\n");
+        write(dir.filePath("manjaro"), "ID=manjaro\nID_LIKE=\"arch\"\n");
+        write(dir.filePath("debian"), "ID=debian\nID_LIKE=\"linux\"\n");
+
+        QVERIFY(Backend::isArchBased(dir.filePath("arch")));
+        QVERIFY(Backend::isArchBased(dir.filePath("archarm")));
+        QVERIFY(Backend::isArchBased(dir.filePath("manjaro")));
+        QVERIFY(!Backend::isArchBased(dir.filePath("debian")));
+        QVERIFY(!Backend::isArchBased(dir.filePath("missing")));
+    }
+
     void queryNotifies()
     {
         Backend backend;
