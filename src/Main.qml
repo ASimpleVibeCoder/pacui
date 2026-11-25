@@ -126,20 +126,6 @@ ApplicationWindow {
                             anchors.margins: 6
                             spacing: 12
 
-                            Rectangle {
-                                Layout.preferredWidth: 80
-                                Layout.fillHeight: true
-                                radius: Math.min(4, theme.radius)
-                                color: Material.accent
-                                Label {
-                                    anchors.centerIn: parent
-                                    text: modelData.repo
-                                    color: theme.accentForeground
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                }
-                            }
-
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 spacing: 2
@@ -159,12 +145,25 @@ ApplicationWindow {
                                 }
                             }
 
-                            Label {
-                                text: modelData.version
-                                color: "#888888"
-                                font.pixelSize: 12
+                            ColumnLayout {
                                 Layout.preferredWidth: 140
-                                elide: Text.ElideRight
+                                spacing: 2
+                                Label {
+                                    text: modelData.version
+                                    color: "#888888"
+                                    font.pixelSize: 12
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignRight
+                                    elide: Text.ElideRight
+                                }
+                                Label {
+                                    text: modelData.repo
+                                    color: Material.accent
+                                    font.pixelSize: 11
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignRight
+                                    elide: Text.ElideRight
+                                }
                             }
 
                             Button {
