@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=pacui
+Comment=A small graphical frontend for pacman
+Exec=pacui %f
+Icon=pacui
+Terminal=false
+Categories=Utility;System;
+StartupWMClass=pacui
+Name[da]=pacui
+Comment[da]=En lille grafisk frontend til pacman

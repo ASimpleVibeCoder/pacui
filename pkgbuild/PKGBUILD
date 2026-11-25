@@ -1,0 +1,23 @@
+pkgname=pacui
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='A small Qt Quick frontend for the pacman package manager'
+arch=('x86_64' 'aarch64')
+license=('MIT')
+depends=('qt6-base' 'qt6-declarative' 'qt6-wayland' 'polkit' 'pacman')
+makedepends=('gcc' 'make')
+source=()
+sha256sums=()
+
+build() {
+  cd "$startdir/.."
+  ./bin/build
+}
+
+package() {
+  cd "$startdir/.."
+  install -Dm755 build/pacui "$pkgdir/usr/bin/pacui"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 pkgbuild/pacui.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/pacui.svg"
+  install -Dm644 pkgbuild/pacui.desktop "$pkgdir/usr/share/applications/pacui.desktop"
+}

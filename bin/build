@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+QMAKE="${QMAKE:-qmake6}"
+mkdir -p "$ROOT/build"
+cd "$ROOT/build"
+
+"$QMAKE" "$ROOT/pacui.pro"
+make -j"$(nproc)"
+
+echo "Built $ROOT/build/pacui"

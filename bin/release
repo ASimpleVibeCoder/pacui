@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+ARCH="$(uname -m)"
+if [ "$ARCH" != "x86_64" ] && [ -z "${CROSS_QMAKE:-}" ]; then
+    echo "This release targets x86_64. Run on an x86_64 host or set CROSS_QMAKE to a cross qmake6." >&2
+    exit 1
+fi
+
+QMAKE="${CROSS_QMAKE:-qmake6}" "$ROOT/bin/build"
+STAGE="$ROOT/build/release-x86_64"
+rm -rf "$STAGE"
+mkdir -p "$STAGE"
+cp "$ROOT/build/pacui" "$STAGE/"
+cp "$ROOT/pkgbuild/pacui.desktop" "$ROOT/pkgbuild/pacui.svg" "$STAGE/"
+cp "$ROOT/README.md" "$ROOT/LICENSE" "$STAGE/"
+
+if ! file "$STAGE/pacui" | grep -q "x86-64"; then
+    echo "The built binary is not x86_64: $(file "$STAGE/pacui")" >&2
+    exit 1
+fi
+
+TARBALL="$ROOT/build/pacui-0.1.0-x86_64.tar.gz"
+tar -czf "$TARBALL" -C "$STAGE" .
+echo "Built $TARBALL"
