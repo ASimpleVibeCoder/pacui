@@ -127,15 +127,15 @@ ApplicationWindow {
                             spacing: 12
 
                             Rectangle {
-                                Layout.preferredWidth: 64
+                                Layout.preferredWidth: 80
                                 Layout.fillHeight: true
                                 radius: Math.min(4, theme.radius)
                                 color: Material.accent
                                 Label {
                                     anchors.centerIn: parent
-                                    text: model.repo
+                                    text: modelData.repo
                                     color: theme.accentForeground
-                                    font.pixelSize: 11
+                                    font.pixelSize: 10
                                     font.bold: true
                                 }
                             }
@@ -144,14 +144,14 @@ ApplicationWindow {
                                 Layout.fillWidth: true
                                 spacing: 2
                                 Label {
-                                    text: model.name
+                                    text: modelData.name
                                     font.pixelSize: 15
                                     font.bold: true
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
                                 }
                                 Label {
-                                    text: model.description || qsTr("No description")
+                                    text: modelData.description || qsTr("No description")
                                     color: "#9a9a9a"
                                     font.pixelSize: 12
                                     elide: Text.ElideRight
@@ -160,7 +160,7 @@ ApplicationWindow {
                             }
 
                             Label {
-                                text: model.version
+                                text: modelData.version
                                 color: "#888888"
                                 font.pixelSize: 12
                                 Layout.preferredWidth: 140
@@ -168,10 +168,10 @@ ApplicationWindow {
                             }
 
                             Button {
-                                text: model.installed ? qsTr("Remove") : qsTr("Install")
+                                text: modelData.installed ? qsTr("Remove") : qsTr("Install")
                                 enabled: !backend.busy && backend.canElevate
-                                Layout.preferredWidth: 90
-                                onClicked: model.installed ? backend.remove(model.name) : backend.install(model.name)
+                                Layout.preferredWidth: 104
+                                onClicked: modelData.installed ? backend.remove(modelData.name) : backend.install(modelData.name)
                             }
                         }
                     }

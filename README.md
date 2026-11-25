@@ -1,5 +1,4 @@
 # pacui
-
 A small Qt Quick graphical frontend for the Arch Linux `pacman` package manager. It follows the Omarchy theme and language, and runs privileged operations through `pkexec`.
 
 This app is vibecoded.
